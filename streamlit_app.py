@@ -43,7 +43,7 @@ municipios = pd.read_csv(
 municipios = municipios[['IBGE6', 'População_estimada']]
 
 # Renomeia as colunas para manter a consistência com os dados anteriores
-municipios.columns = ['Código IBGE', 'População_estimada']
+municipios.columns = ['IBGE6', 'População_estimada']
 
 # Mescla (merge) os dados de abastecimento com a população estimada por município
 dados_pop_sem_info = dados_rs_2023_pop_abastecida.merge(municipios, on='Código IBGE')
