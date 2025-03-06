@@ -52,6 +52,4 @@ dados_pop_sem_info['porcentagem_pop_sem_informacao'] = (
     dados_pop_sem_info['pop_sem_informacao'] / dados_pop_sem_info['População_estimada'] * 100
 ).round(2)
 
-# Exibe a coluna com a porcentagem da população sem informação sobre abastecimento
-dados_pop_sem_info[['porcentagem_pop_sem_informacao']]
 
