@@ -23,4 +23,4 @@ municipios.columns = ['Código IBGE', 'População_estimada']
 dados_pop_sem_info = dados_rs_2023_pop_abastecida.merge(municipios, on='Código IBGE')
 dados_pop_sem_info['pop_sem_informacao'] = dados_pop_sem_info['População_estimada'] - dados_pop_sem_info['total']
 dados_pop_sem_info['porcentagem_pop_sem_informacao'] = (dados_pop_sem_info['pop_sem_informacao']/dados_pop_sem_info['População_estimada']*100).round(2)
-dados_pop_sem_info.sort_values('porcentagem_pop_sem_informacao', ascending=False)
+dados_pop_sem_info[['porcentagem_pop_sem_informacao']]
