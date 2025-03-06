@@ -9,7 +9,7 @@ st.write("Heloo, Sisagua")
 
 dados = pd.read_excel('https://drive.google.com/uc?export=download&id=1-3mDdJsT768n9gupjR3ZFDHdxlbY2td0')
 
-dados_rs_2023 = dados[(dados['Ano de referência']==2025)].reset_index(drop=True)]
+dados_rs_2023 = dados[(dados['Ano de referência']==2025)].reset_index(drop=True)
 dados_rs_2023['pop_abastecida'] = dados_rs_2023['População estimada']
 
 dados_rs_2023_pop_abastecida = pd.pivot_table(dados_rs_2023, index=['Código IBGE', 'Município', 'Regional de Saúde'], values='pop_abastecida', columns='Tipo da Forma de Abastecimento', aggfunc='sum').reset_index()
