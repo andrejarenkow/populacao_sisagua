@@ -2,9 +2,15 @@
 import streamlit as st
 import pandas as pd
 import plotly.express as px
+from urllib.request import urlopen
+import json
 
 # Exibe uma mensagem na interface do Streamlit
 st.write("Hello, Sisagua")
+
+# Importação do json para mapas
+with urlopen('https://raw.githubusercontent.com/andrejarenkow/geodata/refs/heads/main/municipios_rs_CRS/rs_municipios_crs.json') as response:
+    url_municipios_geojson = json.load(response)
 
 # Carrega os dados a partir de um arquivo Excel hospedado no Google Drive
 dados = pd.read_excel('https://drive.google.com/uc?export=download&id=1-3mDdJsT768n9gupjR3ZFDHdxlbY2td0')
@@ -26,8 +32,6 @@ dados_rs_2023_pop_abastecida = pd.pivot_table(
 
 # Calcula o total da população abastecida somando as colunas 'SAA', 'SAC' e 'SAI'
 dados_rs_2023_pop_abastecida['total'] = dados_rs_2023_pop_abastecida[['SAA','SAC','SAI']].sum(axis=1)
-
-dados_rs_2023_pop_abastecida  # Exibe a tabela no Streamlit
 
 # Carrega os dados de municípios a partir de um arquivo CSV no GitHub
 municipios = pd.read_csv(
@@ -52,4 +56,20 @@ dados_pop_sem_info['porcentagem_pop_sem_informacao'] = (
     dados_pop_sem_info['pop_sem_informacao'] / dados_pop_sem_info['População_estimada'] * 100
 ).round(2)
 
+# Mapa
+fig = px.choropleth(dados_pop_sem_info, geojson=url_municipios_geojson, locations='IBGE6', featureidkey="properties.IBGE6",
+                    color='porcentagem_pop_sem_informacao',
+                    color_continuous_scale="Viridis",
+                    range_color=(0, 100),
+                    labels={'porcentagem_pop_sem_informacao':'População sem informação'},
+                    projection="mercator",
+                    hover_data=['Regional de Saúde'],
+                    hover_name='Município',
+                    title='População sem informação por município',
+                    width=1000,
+                    height=800
+                          )
 
+fig.update_geos(fitbounds="locations", visible=False)
+#fig.update_layout(margin={"r":0,"t":0,"l":0,"b":0})
+st.plotly_chart(fig)
