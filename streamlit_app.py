@@ -1,26 +1,57 @@
-# Importação de bibliotecas
+# Importação das bibliotecas necessárias
 import streamlit as st
 import pandas as pd
 import plotly.express as px
 
-# Hello SISAGUA
+# Exibe uma mensagem na interface do Streamlit
+st.write("Hello, Sisagua")
 
-st.write("Heloo, Sisagua")
-
+# Carrega os dados a partir de um arquivo Excel hospedado no Google Drive
 dados = pd.read_excel('https://drive.google.com/uc?export=download&id=1-3mDdJsT768n9gupjR3ZFDHdxlbY2td0')
 
-dados_rs_2023 = dados[(dados['Ano de referência']==2025)].reset_index(drop=True)
+# Filtra os dados para incluir apenas o ano de referência 2025 (possível erro, deveria ser 2023?)
+dados_rs_2023 = dados[(dados['Ano de referência'] == 2025)].reset_index(drop=True)
+
+# Cria uma nova coluna 'pop_abastecida' baseada na 'População estimada'
 dados_rs_2023['pop_abastecida'] = dados_rs_2023['População estimada']
 
-dados_rs_2023_pop_abastecida = pd.pivot_table(dados_rs_2023, index=['Código IBGE', 'Município', 'Regional de Saúde'], values='pop_abastecida', columns='Tipo da Forma de Abastecimento', aggfunc='sum').reset_index()
-dados_rs_2023_pop_abastecida['total'] = dados_rs_2023_pop_abastecida[['SAA','SAC','SAI']].sum(axis=1)
-dados_rs_2023_pop_abastecida
+# Criação de uma tabela dinâmica (pivot table) para agregar os dados de população abastecida
+dados_rs_2023_pop_abastecida = pd.pivot_table(
+    dados_rs_2023, 
+    index=['Código IBGE', 'Município', 'Regional de Saúde'], 
+    values='pop_abastecida', 
+    columns='Tipo da Forma de Abastecimento', 
+    aggfunc='sum'
+).reset_index()
 
-municipios = pd.read_csv('https://raw.githubusercontent.com/andrejarenkow/csv/master/Munic%C3%ADpios%20RS%20IBGE6%20Popula%C3%A7%C3%A3o%20CRS%20Regional%20-%20P%C3%A1gina1.csv', sep=',')
+# Calcula o total da população abastecida somando as colunas 'SAA', 'SAC' e 'SAI'
+dados_rs_2023_pop_abastecida['total'] = dados_rs_2023_pop_abastecida[['SAA','SAC','SAI']].sum(axis=1)
+
+dados_rs_2023_pop_abastecida  # Exibe a tabela no Streamlit
+
+# Carrega os dados de municípios a partir de um arquivo CSV no GitHub
+municipios = pd.read_csv(
+    'https://raw.githubusercontent.com/andrejarenkow/csv/master/Munic%C3%ADpios%20RS%20IBGE6%20Popula%C3%A7%C3%A3o%20CRS%20Regional%20-%20P%C3%A1gina1.csv',
+    sep=','
+)
+
+# Seleciona apenas as colunas relevantes
 municipios = municipios[['IBGE6', 'População_estimada']]
+
+# Renomeia as colunas para manter a consistência com os dados anteriores
 municipios.columns = ['Código IBGE', 'População_estimada']
 
+# Mescla (merge) os dados de abastecimento com a população estimada por município
 dados_pop_sem_info = dados_rs_2023_pop_abastecida.merge(municipios, on='Código IBGE')
+
+# Calcula a população sem informação de abastecimento de água
 dados_pop_sem_info['pop_sem_informacao'] = dados_pop_sem_info['População_estimada'] - dados_pop_sem_info['total']
-dados_pop_sem_info['porcentagem_pop_sem_informacao'] = (dados_pop_sem_info['pop_sem_informacao']/dados_pop_sem_info['População_estimada']*100).round(2)
+
+# Calcula a porcentagem da população sem informação e arredonda para duas casas decimais
+dados_pop_sem_info['porcentagem_pop_sem_informacao'] = (
+    dados_pop_sem_info['pop_sem_informacao'] / dados_pop_sem_info['População_estimada'] * 100
+).round(2)
+
+# Exibe a coluna com a porcentagem da população sem informação sobre abastecimento
 dados_pop_sem_info[['porcentagem_pop_sem_informacao']]
+
