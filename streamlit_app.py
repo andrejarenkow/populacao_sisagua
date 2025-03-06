@@ -43,7 +43,7 @@ municipios = pd.read_csv(
 municipios = municipios[['IBGE6', 'População_estimada']]
 
 # Renomeia as colunas para manter a consistência com os dados anteriores
-municipios.columns = ['IBGE6', 'População_estimada']
+municipios.columns = ['Código IBGE', 'População_estimada']
 
 # Mescla (merge) os dados de abastecimento com a população estimada por município
 dados_pop_sem_info = dados_rs_2023_pop_abastecida.merge(municipios, on='Código IBGE')
@@ -57,7 +57,7 @@ dados_pop_sem_info['porcentagem_pop_sem_informacao'] = (
 ).round(2)
 
 # Mapa
-fig = px.choropleth(dados_pop_sem_info, geojson=url_municipios_geojson, locations='IBGE6', featureidkey="properties.IBGE6",
+fig = px.choropleth(dados_pop_sem_info, geojson=url_municipios_geojson, locations='Código IBGE', featureidkey="properties.IBGE6",
                     color='porcentagem_pop_sem_informacao',
                     color_continuous_scale="Viridis",
                     range_color=(0, 100),
