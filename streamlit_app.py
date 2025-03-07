@@ -115,5 +115,5 @@ coluna_1, coluna_2 = st.columns(2)
 # Criar gráfico de barras com Streamlit
 with coluna_1:
     st.write('aaaa')
-    st.bar_chart(df_faixas.set_index('faixa'), height = 800)
+    st.bar_chart(df_faixas.set_index('faixa'), height = 500)
 coluna_2.plotly_chart(fig_mapa)
