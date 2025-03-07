@@ -105,7 +105,7 @@ df_faixas = dados_pop_sem_info['faixa'].value_counts().reset_index()
 df_faixas.columns = ['faixa', 'contagem']
 
 # Definir a ordem desejada
-ordem_faixas = ['0%', '1 a 25%', '25 a 50%', '50 a 75%', '75 a 99%', '100%']
+ordem_faixas = nomes_faixas
 df_faixas['faixa'] = pd.Categorical(df_faixas['faixa'], categories=ordem_faixas, ordered=True)
 
 # Criar gráfico de barras
