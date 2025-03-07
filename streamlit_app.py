@@ -105,15 +105,14 @@ df_faixas = dados_pop_sem_info['faixa'].value_counts().reset_index()
 df_faixas.columns = ['faixa', 'contagem']
 
 # Definir a ordem desejada
-ordem_faixas = nomes_faixas
-#df_faixas['faixa'] = pd.Categorical(df_faixas['faixa'], categories=ordem_faixas, ordered=True)
-#df_faixas['faixa'] = df_faixas['faixa'].astype('str')
+ordem_faixas = ['0%', '1 a 25%', '25 a 50%', '50 a 75%', '75 a 99%', '100%']
+df_faixas['faixa'] = pd.Categorical(df_faixas['faixa'], categories=ordem_faixas, ordered=True)
 
-# Criar gráfico de barras
-fig_bar = px.bar(df_faixas.sort_values('faixa'), x='faixa', y='contagem', title='Distribuição das Faixas',
-             labels={'faixa': 'Faixa', 'contagem': 'Contagem'}, text_auto=True)
+# Ordenar o DataFrame pela categoria ordenada
+df_faixas = df_faixas.sort_values('faixa')
 
-df_faixas
+
 coluna_1, coluna_2 = st.columns(2)
-fig_bar
+# Criar gráfico de barras com Streamlit
+coluna_1.barchart(df_faixas.set_index('faixa'))
 coluna_2.plotly_chart(fig_mapa)
