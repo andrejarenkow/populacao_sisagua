@@ -84,11 +84,12 @@ fig = px.choropleth(dados_pop_sem_info, geojson=url_municipios_geojson, location
                     height=800,
                     #template = 'plotly_dark',
                     color_discrete_map = {
-                        '1 a 25': 'darkred',
-                        '25 a 50': 'orange',
-                       '50 a 75': 'yellow',
-                        '75 a 100': 'green',
-                        '0': 'red'
+                        '1 a 25': '#FE556A',
+                        '25 a 50': '#FEA052',
+                       '50 a 75': '#FEDD59',
+                        '75 a 99': '#19B377',
+                        '0': '#161C23',
+                        '100': '#5372FE'
                     }
 
                           )
