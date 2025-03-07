@@ -107,6 +107,7 @@ df_faixas.columns = ['faixa', 'contagem']
 # Definir a ordem desejada
 ordem_faixas = nomes_faixas
 df_faixas['faixa'] = pd.Categorical(df_faixas['faixa'], categories=ordem_faixas, ordered=True)
+df_faixas['faixa'] = df_faixas['faixa'].astype('str')
 
 # Criar gráfico de barras
 fig_bar = px.bar(df_faixas.sort_values('faixa'), x='faixa', y='contagem', title='Distribuição das Faixas',
