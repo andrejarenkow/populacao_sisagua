@@ -47,25 +47,18 @@ municipios.columns = ['Código IBGE', 'População_estimada', 'Município']
 
 dados_pop_sem_info = dados_rs_2023_pop_abastecida.drop(['Município'], axis = 1).merge(municipios, on='Código IBGE', how = 'right')
 dados_pop_sem_info['IBGE6'] = dados_pop_sem_info['Código IBGE']#.astype(str)
-dados_pop_sem_info['pop_sem_informacao'] = dados_pop_sem_info['População_estimada'] - dados_pop_sem_info['total']
-dados_pop_sem_info['porcentagem_pop_sem_informacao'] = (dados_pop_sem_info['pop_sem_informacao']/dados_pop_sem_info['População_estimada']*100).round(2)
-dados_pop_sem_info.fillna(0, inplace=True)
+dados_pop_sem_info['porcentagem_pop_com_informacao'] = (dados_pop_sem_info['total']/dados_pop_sem_info['População_estimada']*100).round(1).fillna(0)
 
-# Transformar numero negativo em 100
-dados_pop_sem_info.loc[dados_pop_sem_info['porcentagem_pop_sem_informacao'] < 0, 'porcentagem_pop_sem_informacao'] = 100
-
-dados_pop_sem_info.sort_values('porcentagem_pop_sem_informacao', ascending=False)
+dados_pop_sem_info.sort_values('porcentagem_pop_com_informacao', ascending=False)
 
 # Criar faixas para deixar cores discretas
 
-faixas = [-100, 0, 25, 50, 75, 99, 101]
+faixas = [-1, 1, 25, 50, 75, 99, 10000]
 
 nomes_faixas = ['0', '1 a 25','25 a 50', '50 a 75', '75 a 99', '100']
 
-dados_pop_sem_info['faixa'] = pd.cut(dados_pop_sem_info['porcentagem_pop_sem_informacao'], bins=faixas, labels=nomes_faixas)
-dados_pop_sem_info = dados_pop_sem_info.sort_values('porcentagem_pop_sem_informacao')
-
-
+dados_pop_sem_info['faixa'] = pd.cut(dados_pop_sem_info['porcentagem_pop_com_informacao'], bins=faixas, labels=nomes_faixas)
+dados_pop_sem_info = dados_pop_sem_info.sort_values('porcentagem_pop_com_informacao')
 
 # Gerar mapa com o plotly.express
 
@@ -75,14 +68,13 @@ fig = px.choropleth(dados_pop_sem_info, geojson=url_municipios_geojson, location
                     color='faixa',
                     color_continuous_scale="Viridis",
                     range_color=(0, 100),
-                    labels={'porcentagem_pop_sem_informacao':'População sem informação'},
+                    labels={'porcentagem_pop_com_informacao':'População com informação'},
                     projection="mercator",
-                    hover_data=['porcentagem_pop_sem_informacao', 'Regional de Saúde'],
+                    hover_data=['porcentagem_pop_com_informacao', 'Regional de Saúde'],
                     hover_name='Município',
-                    title='População sem informação por município',
+                    title='População com informação por município',
                     width=1000,
                     height=800,
-                    #template = 'plotly_dark',
                     color_discrete_map = {
                         '1 a 25': '#FE556A',
                         '25 a 50': '#FEA052',
@@ -96,6 +88,5 @@ fig = px.choropleth(dados_pop_sem_info, geojson=url_municipios_geojson, location
 
 
 fig.update_geos(fitbounds="locations", visible=False)
-#fig.update_layout(margin={"r":0,"t":0,"l":0,"b":0})
 
 st.plotly_chart(fig)
