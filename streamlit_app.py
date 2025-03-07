@@ -58,9 +58,9 @@ dados_pop_sem_info.sort_values('porcentagem_pop_sem_informacao', ascending=False
 
 # Criar faixas para deixar cores discretas
 
-faixas = [-100, 0, 25, 50, 75, 100]
+faixas = [-100, 0, 25, 50, 75, 99, 101]
 
-nomes_faixas = ['0', '1 a 25','25 a 50', '50 a 75', '75 a 100', ]
+nomes_faixas = ['0', '1 a 25','25 a 50', '50 a 75', '75 a 99', '100']
 
 dados_pop_sem_info['faixa'] = pd.cut(dados_pop_sem_info['porcentagem_pop_sem_informacao'], bins=faixas, labels=nomes_faixas)
 dados_pop_sem_info = dados_pop_sem_info.sort_values('porcentagem_pop_sem_informacao')
