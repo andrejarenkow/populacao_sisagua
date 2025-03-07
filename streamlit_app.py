@@ -40,26 +40,30 @@ municipios = pd.read_csv(
 )
 
 # Seleciona apenas as colunas relevantes
-municipios = municipios[['IBGE6', 'População_estimada']]
+municipios = municipios[['IBGE6', 'População_estimada', "Município"]]
 
 # Renomeia as colunas para manter a consistência com os dados anteriores
-municipios.columns = ['Código IBGE', 'População_estimada']
+municipios.columns = ['Código IBGE', 'População_estimada', 'Município']
 
-# Mescla (merge) os dados de abastecimento com a população estimada por município
-dados_pop_sem_info = dados_rs_2023_pop_abastecida.merge(municipios, on='Código IBGE')
-
-# Calcula a população sem informação de abastecimento de água
+dados_pop_sem_info = dados_rs_2023_pop_abastecida.drop(['Município'], axis = 1).merge(municipios, on='Código IBGE', how = 'right')
+dados_pop_sem_info['IBGE6'] = dados_pop_sem_info['Código IBGE']#.astype(str)
 dados_pop_sem_info['pop_sem_informacao'] = dados_pop_sem_info['População_estimada'] - dados_pop_sem_info['total']
+dados_pop_sem_info['porcentagem_pop_sem_informacao'] = (dados_pop_sem_info['pop_sem_informacao']/dados_pop_sem_info['População_estimada']*100).round(2)
+dados_pop_sem_info.fillna(0, inplace=True)
 
-# Calcula a porcentagem da população sem informação e arredonda para duas casas decimais
-dados_pop_sem_info['porcentagem_pop_sem_informacao'] = (
-    dados_pop_sem_info['pop_sem_informacao'] / dados_pop_sem_info['População_estimada'] * 100
-).round(1)
+# Transformar numero negativo em 100
+dados_pop_sem_info.loc[dados_pop_sem_info['porcentagem_pop_sem_informacao'] < 0, 'porcentagem_pop_sem_informacao'] = 100
+
+dados_pop_sem_info.sort_values('porcentagem_pop_sem_informacao', ascending=False)
 
 # Criar faixas para deixar cores discretas
+
 faixas = [-100, 0, 25, 50, 75, 100]
-nomes_faixas = ['Mais de 100', '0 a 25','25 a 50', '50 a 75', '75 a 100', ]
+
+nomes_faixas = ['0', '1 a 25','25 a 50', '50 a 75', '75 a 100', ]
+
 dados_pop_sem_info['faixa'] = pd.cut(dados_pop_sem_info['porcentagem_pop_sem_informacao'], bins=faixas, labels=nomes_faixas)
+dados_pop_sem_info = dados_pop_sem_info.sort_values('porcentagem_pop_sem_informacao')
 
 
 
@@ -78,18 +82,19 @@ fig = px.choropleth(dados_pop_sem_info, geojson=url_municipios_geojson, location
                     title='População sem informação por município',
                     width=1000,
                     height=800,
-                    basemap_visible  = True,
+                    #template = 'plotly_dark',
                     color_discrete_map = {
-                        '0 a 25': 'darkred',
+                        '1 a 25': 'darkred',
                         '25 a 50': 'orange',
-                        '50 a 75': 'yellow',
+                       '50 a 75': 'yellow',
                         '75 a 100': 'green',
-                        'Mais de 100': 'blue'
-
+                        '0': 'red'
                     }
+
                           )
 
 
 fig.update_geos(fitbounds="locations", visible=False)
 #fig.update_layout(margin={"r":0,"t":0,"l":0,"b":0})
+
 st.plotly_chart(fig)
