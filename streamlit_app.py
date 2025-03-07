@@ -7,8 +7,8 @@ import json
 
 # Configurações da página
 st.set_page_config(
-    page_title="Ovitrampas",
-    page_icon="	:bug:",
+    page_title="Pop Sisagua",
+    page_icon="	:water:",
     layout="wide",
     initial_sidebar_state='collapsed'
 ) 
