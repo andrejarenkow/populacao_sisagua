@@ -114,5 +114,5 @@ df_faixas = df_faixas.sort_values('faixa')
 coluna_1, coluna_2 = st.columns(2)
 # Criar gráfico de barras com Streamlit
 with coluna_1:
-    st.barchart(df_faixas.set_index('faixa'))
+    st.bar_chart(df_faixas.set_index('faixa'))
 coluna_2.plotly_chart(fig_mapa)
