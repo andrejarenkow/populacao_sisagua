@@ -54,22 +54,42 @@ dados_pop_sem_info['pop_sem_informacao'] = dados_pop_sem_info['População_estim
 # Calcula a porcentagem da população sem informação e arredonda para duas casas decimais
 dados_pop_sem_info['porcentagem_pop_sem_informacao'] = (
     dados_pop_sem_info['pop_sem_informacao'] / dados_pop_sem_info['População_estimada'] * 100
-).round(2)
+).round(1)
 
-# Mapa
+# Criar faixas para deixar cores discretas
+faixas = [-100, 0, 25, 50, 75, 100]
+nomes_faixas = ['Mais de 100', '0 a 25','25 a 50', '50 a 75', '75 a 100', ]
+dados_pop_sem_info['faixa'] = pd.cut(dados_pop_sem_info['porcentagem_pop_sem_informacao'], bins=faixas, labels=nomes_faixas)
+
+
+
+# Gerar mapa com o plotly.express
+
+import plotly.express as px
+
 fig = px.choropleth(dados_pop_sem_info, geojson=url_municipios_geojson, locations='Código IBGE', featureidkey="properties.IBGE6",
-                    color='porcentagem_pop_sem_informacao',
+                    color='faixa',
                     color_continuous_scale="Viridis",
                     range_color=(0, 100),
                     labels={'porcentagem_pop_sem_informacao':'População sem informação'},
                     projection="mercator",
-                    hover_data=['Regional de Saúde'],
+                    hover_data=['porcentagem_pop_sem_informacao', 'Regional de Saúde'],
                     hover_name='Município',
                     title='População sem informação por município',
                     width=1000,
-                    height=800
+                    height=800,
+                    basemap_visible  = True,
+                    color_discrete_map = {
+                        '0 a 25': 'darkred',
+                        '25 a 50': 'orange',
+                        '50 a 75': 'yellow',
+                        '75 a 100': 'green',
+                        'Mais de 100': 'blue'
+
+                    }
                           )
+
 
 fig.update_geos(fitbounds="locations", visible=False)
 #fig.update_layout(margin={"r":0,"t":0,"l":0,"b":0})
-st.plotly_chart(fig)
+fig.show()
