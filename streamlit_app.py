@@ -98,7 +98,7 @@ fig_mapa = px.choropleth(dados_pop_sem_info, geojson=url_municipios_geojson, loc
                           )
 
 
-fig.update_geos(fitbounds="locations", visible=False)
+fig_mapa.update_geos(fitbounds="locations", visible=False)
 
 # Criar DataFrame com a contagem das faixas
 df_faixas = dados_pop_sem_info['faixa'].value_counts().reset_index()
