@@ -74,7 +74,7 @@ dados_pop_sem_info = dados_pop_sem_info.sort_values('porcentagem_pop_com_informa
 
 import plotly.express as px
 
-fig = px.choropleth(dados_pop_sem_info, geojson=url_municipios_geojson, locations='Código IBGE', featureidkey="properties.IBGE6",
+fig_mapa = px.choropleth(dados_pop_sem_info, geojson=url_municipios_geojson, locations='Código IBGE', featureidkey="properties.IBGE6",
                     color='faixa',
                     color_continuous_scale="Viridis",
                     range_color=(0, 100),
@@ -100,4 +100,19 @@ fig = px.choropleth(dados_pop_sem_info, geojson=url_municipios_geojson, location
 
 fig.update_geos(fitbounds="locations", visible=False)
 
-st.plotly_chart(fig)
+# Criar DataFrame com a contagem das faixas
+df_faixas = dados_pop_sem_info['faixa'].value_counts().reset_index()
+df_faixas.columns = ['faixa', 'contagem']
+
+# Definir a ordem desejada
+ordem_faixas = ['0%', '1 a 25%', '25 a 50%', '50 a 75%', '75 a 99%', '100%']
+df_faixas['faixa'] = pd.Categorical(df_faixas['faixa'], categories=ordem_faixas, ordered=True)
+
+# Criar gráfico de barras
+fig_bar = px.bar(df_faixas.sort_values('faixa'), x='faixa', y='contagem', title='Distribuição das Faixas',
+             labels={'faixa': 'Faixa', 'contagem': 'Contagem'}, text_auto=True)
+
+
+coluna_1, coluna_2 = st.columns(2)
+coluna_1.plotly_chart(fig_bar)
+coluna_2.plotly_chart(fig_mapa)
