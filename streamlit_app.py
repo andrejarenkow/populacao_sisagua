@@ -115,5 +115,5 @@ fig_bar = px.bar(df_faixas.sort_values('faixa'), x='faixa', y='contagem', title=
 
 df_faixas
 coluna_1, coluna_2 = st.columns(2)
-coluna_1.plotly_chart(fig_bar)
+fig_bar
 coluna_2.plotly_chart(fig_mapa)
