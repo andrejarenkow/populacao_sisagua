@@ -111,8 +111,8 @@ df_faixas['faixa'] = pd.Categorical(df_faixas['faixa'], categories=ordem_faixas,
 # Ordenar o DataFrame pela categoria ordenada
 df_faixas = df_faixas.sort_values('faixa')
 
-
 coluna_1, coluna_2 = st.columns(2)
 # Criar gráfico de barras com Streamlit
-coluna_1.barchart(df_faixas.set_index('faixa'))
+with coluna_1:
+    st.barchart(df_faixas.set_index('faixa'))
 coluna_2.plotly_chart(fig_mapa)
