@@ -5,8 +5,18 @@ import plotly.express as px
 from urllib.request import urlopen
 import json
 
-# Exibe uma mensagem na interface do Streamlit
-st.write("Hello, Sisagua")
+# Configurações da página
+st.set_page_config(
+    page_title="Ovitrampas",
+    page_icon="	:bug:",
+    layout="wide",
+    initial_sidebar_state='collapsed'
+) 
+col1, col2, col3 = st.columns([1,4,1])
+
+col1.image('https://github.com/andrejarenkow/csv/blob/master/logo_cevs%20(2).png?raw=true', width=100)
+col2.header('Painel População Abastecida no Sisagua')
+col3.image('https://github.com/andrejarenkow/csv/blob/master/logo_estado%20(3)%20(1).png?raw=true', width=150)
 
 # Importação do json para mapas
 with urlopen('https://raw.githubusercontent.com/andrejarenkow/geodata/refs/heads/main/municipios_rs_CRS/rs_municipios_crs.json') as response:
@@ -55,7 +65,7 @@ dados_pop_sem_info.sort_values('porcentagem_pop_com_informacao', ascending=False
 
 faixas = [-1, 1, 25, 50, 75, 99, 10000]
 
-nomes_faixas = ['0', '1 a 25','25 a 50', '50 a 75', '75 a 99', '100']
+nomes_faixas = ['0%', '1 a 25%','25 a 50%', '50 a 75%', '75 a 99%', '100%']
 
 dados_pop_sem_info['faixa'] = pd.cut(dados_pop_sem_info['porcentagem_pop_com_informacao'], bins=faixas, labels=nomes_faixas)
 dados_pop_sem_info = dados_pop_sem_info.sort_values('porcentagem_pop_com_informacao')
@@ -76,12 +86,12 @@ fig = px.choropleth(dados_pop_sem_info, geojson=url_municipios_geojson, location
                     width=1000,
                     height=800,
                     color_discrete_map = {
-                        '1 a 25': '#FE556A',
-                        '25 a 50': '#FEA052',
-                       '50 a 75': '#FEDD59',
-                        '75 a 99': '#19B377',
-                        '0': '#161C23',
-                        '100': '#5372FE'
+                        '1 a 25%': '#FE556A',
+                        '25 a 50%': '#FEA052',
+                       '50 a 75%': '#FEDD59',
+                        '75 a 99%': '#19B377',
+                        '0%': '#161C23',
+                        '100%': '#5372FE'
                     }
 
                           )
